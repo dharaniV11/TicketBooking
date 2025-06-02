@@ -78,6 +78,7 @@ public class UserService {
                     .age(userEntity.getAge())
                     .build();
             userResponseBeans.add(userResponseBean);
+            log.info("All Users get successfully {}", userResponseBeans.size());
         }
         return userResponseBeans;
     }
@@ -86,7 +87,11 @@ public class UserService {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()-> new ResourceNotFoundException("User not found with email: " + email));
         if (userEntity != null) {
             userRepository.delete(userEntity);
+            log.info("User Deleted Successfully {}" , email);
             return "User Deleted Successfully " + userEntity.getEmail();
+        }
+        else {
+            log.info("User Not Found {}", email);
         }
         return null;
     }

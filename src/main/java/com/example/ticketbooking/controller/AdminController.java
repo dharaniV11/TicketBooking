@@ -4,6 +4,7 @@ import com.example.ticketbooking.RequestBean.MovieRequestBean;
 import com.example.ticketbooking.RequestBean.MovieShowDetailsRequestBean;
 import com.example.ticketbooking.RequestBean.ShowTimeRequestBean;
 import com.example.ticketbooking.RequestBean.TheaterRequestBean;
+import com.example.ticketbooking.ResponseBean.MovieShowDetailsResponseBean;
 import com.example.ticketbooking.ResponseBean.ShowTimeResponseBean;
 import com.example.ticketbooking.ResponseBean.TheaterResponseBean;
 import com.example.ticketbooking.exception.ResourceNotFoundException;
@@ -68,6 +69,16 @@ public class AdminController {
     @GetMapping("/getAllShowTime")
     public List<ShowTimeResponseBean> getAllShowTime() {
         return adminService.getAllShowTime();
+    }
+
+    @GetMapping("/getAllShowDetails")
+    public List<MovieShowDetailsResponseBean> getAllShowAvailabilities() {
+        return adminService.getAllShowAvailabilities();
+    }
+
+    @DeleteMapping("/deleteMovieShowDetails/{movieShowDetailsId}")
+    public String deleteMovieShowDetails(@PathVariable UUID movieShowDetailsId) throws ResourceNotFoundException {
+        return adminService.DeleteMovieShowDetails(movieShowDetailsId);
     }
 
     @PostMapping("/addMovieShowDetails")

@@ -7,6 +7,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 @Service
 public class UserCriteriaService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserCriteriaService.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -53,6 +56,7 @@ public class UserCriteriaService {
                     .build();
             userResponseBeans.add(userResponseBean);
         }
+        log.info("Users found: {}", userResponseBeans.size());
         return userResponseBeans;
     }
 }

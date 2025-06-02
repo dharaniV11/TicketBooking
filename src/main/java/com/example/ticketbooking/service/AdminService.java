@@ -5,6 +5,7 @@ import com.example.ticketbooking.RequestBean.MovieRequestBean;
 import com.example.ticketbooking.RequestBean.MovieShowDetailsRequestBean;
 import com.example.ticketbooking.RequestBean.ShowTimeRequestBean;
 import com.example.ticketbooking.RequestBean.TheaterRequestBean;
+import com.example.ticketbooking.ResponseBean.MovieShowDetailsResponseBean;
 import com.example.ticketbooking.ResponseBean.ShowTimeResponseBean;
 import com.example.ticketbooking.ResponseBean.TheaterResponseBean;
 import com.example.ticketbooking.entity.MovieEntity;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.example.ticketbooking.service.BookingService.getMovieShowDetailsResponseBeans;
 
 @Slf4j
 @Service
@@ -49,7 +52,7 @@ public class AdminService {
                 .price(movieRequestBean.getPrice())
                 .build();
         movieRepository.save(movieEntity);
-        log.info("Movie added successfully");
+        log.info("Movie added successfully {}", movieEntity.getMovieName());
         return movieRequestBean;
     }
 
@@ -57,6 +60,7 @@ public class AdminService {
         MovieEntity movieEntity = movieRepository.findById(MovieId).orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
         if (movieEntity != null) {
             movieRepository.delete(movieEntity);
+            log.info("Movie deleted successfully {}", movieEntity.getMovieName());
             return "Movie Deleted Successfully " + movieEntity.getMovieName();
         }
         return null;
@@ -75,6 +79,7 @@ public class AdminService {
                     .build();
             MovieResponseBeans.add(movieResponseBean);
         }
+        log.info("All movies get successfully, total no of movies {}", MovieResponseBeans.size());
         return MovieResponseBeans;
     }
 
@@ -87,7 +92,7 @@ public class AdminService {
                 .totalSeats(theaterRequestBean.getTotalSeats())
                 .build();
         theaterRepository.save(theaterEntity);
-        log.info("Theater added successfully");
+        log.info("Theater added successfully {}", theaterEntity.getTheaterName());
         return theaterRequestBean;
     }
 
@@ -95,6 +100,7 @@ public class AdminService {
         TheaterEntity theaterEntity = theaterRepository.findById(TheaterId).orElseThrow(() -> new ResourceNotFoundException("Theater not found"));
         if (theaterEntity != null) {
             theaterRepository.delete(theaterEntity);
+            log.info("Theater deleted successfully {}", theaterEntity.getTheaterName());
             return "Theater Deleted Successfully " + theaterEntity.getTheaterName();
         }
         return null;
@@ -111,6 +117,7 @@ public class AdminService {
                     .build();
             TheaterResponseBeans.add(theaterResponseBean);
         }
+        log.info("All theater get successfully, total no of theaters {}", TheaterResponseBeans.size());
         return TheaterResponseBeans;
     }
 
@@ -122,7 +129,7 @@ public class AdminService {
                 .showTime(showTimeRequestBean.getShowTime())
                 .build();
         showTimeRepository.save(showTimeEntity);
-        log.info("ShowTime added successfully");
+        log.info("ShowTime added successfully {}",showTimeEntity.getShowTime());
         return showTimeRequestBean;
     }
 
@@ -130,6 +137,7 @@ public class AdminService {
         ShowTimeEntity showTimeEntity = showTimeRepository.findById(ShowTimeId).orElseThrow(() -> new ResourceNotFoundException("ShowTime not found"));
         if (showTimeEntity != null) {
             showTimeRepository.delete(showTimeEntity);
+            log.info("ShowTime Deleted successfully {}", showTimeEntity.getShowTime());
             return "ShowTime Deleted Successfully " + showTimeEntity.getShowTime();
         }
         return null;
@@ -145,6 +153,7 @@ public class AdminService {
                     .build();
             ShowTimeResponseBeans.add(showTimeResponseBean);
         }
+        log.info("All ShowTimes get successfully, total no of ShowTime {}",ShowTimeResponseBeans.size());
         return ShowTimeResponseBeans;
     }
 
@@ -158,6 +167,7 @@ public class AdminService {
 
         boolean exists = movieShowDetailsRepository.existsByTheaterIdAndShowTimeId(theater.getId(), showTime.getId());
         if (exists) {
+            log.warn("A movie is already scheduled in this theater at the selected timeslot");
             throw new NotAvailableException("A movie is already scheduled in this theater at the selected timeslot.");
         }
 
@@ -171,7 +181,22 @@ public class AdminService {
         details.setAvailableSeats(theater.getTotalSeats());
 
         movieShowDetailsRepository.save(details);
-        return details.getTheater() + " - "+ details.getMovie() + " - "+ details.getShowTime() +" - Movie show details added successfully.";
+        log.info("{} - {} - {} - Movie show details added successfully", details.getTheater().getTheaterName(), details.getMovie().getMovieName(), details.getShowTime().getShowTime());
+        return details.getTheater().getTheaterName() + " - "+ details.getMovie().getMovieName() + " - "+ details.getShowTime().getShowTime() +" - Movie show details added successfully.";
     }
 
+    public String DeleteMovieShowDetails(UUID movieShowDetailsId) throws ResourceNotFoundException {
+
+        MovieShowDetailsEntity movieShowDetailsEntity = movieShowDetailsRepository.findById(movieShowDetailsId).orElseThrow(() -> new ResourceNotFoundException("MovieShowDetails not found"));
+        if (movieShowDetailsEntity != null) {
+            movieShowDetailsRepository.delete(movieShowDetailsEntity);
+            log.info("MovieShowDetails Deleted successfully {} - {} - {}",movieShowDetailsEntity.getMovie().getMovieName(), movieShowDetailsEntity.getTheater().getTheaterName(), movieShowDetailsEntity.getShowTime().getShowTime());
+            return "MovieShowDetails Deleted Successfully " + movieShowDetailsEntity.getMovie().getMovieName() +" "+ movieShowDetailsEntity.getTheater().getTheaterName() + " " + movieShowDetailsEntity.getShowTime().getShowTime();
+        }
+        return null;
+    }
+
+    public List<MovieShowDetailsResponseBean> getAllShowAvailabilities() {
+        return getMovieShowDetailsResponseBeans(movieShowDetailsRepository, log);
+    }
 }

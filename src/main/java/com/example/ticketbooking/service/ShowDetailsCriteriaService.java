@@ -14,6 +14,8 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShowDetailsCriteriaService {
 
+    private static final Logger log = LoggerFactory.getLogger(ShowDetailsCriteriaService.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -37,16 +40,19 @@ public class ShowDetailsCriteriaService {
 
         if(theater != null && theaterRepository.findByName(theater).isEmpty())
         {
+            log.error("No theater found with theater name {}" , theater);
             throw new ResourceNotFoundException("No theater found with given name " + theater);
         }
 
         if(movie != null && movieRepository.findMovieByName(movie).isEmpty())
         {
+            log.error("No movie found with given Movie name {}", movie);
             throw new ResourceNotFoundException("No movie found with given name " + movie);
         }
 
         if(showTime != null && showTimeRepository.findByShowTime(showTime).isEmpty())
         {
+            log.error("No showTime found with given showTime {}", showTime);
             throw new ResourceNotFoundException("No showTime found with given name " + showTime);
         }
 
@@ -86,9 +92,11 @@ public class ShowDetailsCriteriaService {
             }
             if (movieShowDetailsResponseBeans.isEmpty())
             {
+                log.error("No data found with given criteria {} - {} - {}", movie, theater, showTime);
                 throw new ResourceNotFoundException("No data found with given criteria");
             }
             else {
+                log.info("Found {} data", movieShowDetailsResponseBeans.size());
                 return movieShowDetailsResponseBeans;
             }
         }

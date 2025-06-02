@@ -76,9 +76,9 @@ public class BookingController {
         return ResponseEntity.ok().body(ticket);
     }
 
-    @DeleteMapping("/deleteBooking/{bookingId}")
-    public ResponseEntity<String> deleteUser(@PathVariable UUID bookingId) {
-        String result = bookingService.DeleteBookingById(bookingId);
+    @DeleteMapping("/cancelBooking/{bookingId}")
+    public ResponseEntity<String> cancelBooking(@PathVariable UUID bookingId) {
+        String result = bookingService.CancelBookingById(bookingId);
         return ResponseEntity.ok(result);
     }
 

@@ -9,6 +9,8 @@ import com.example.ticketbooking.exception.UnableToProcessCauseOfTimeException;
 import com.example.ticketbooking.repository.*;
 import com.example.ticketbooking.ResponseBean.BookingResponseBean;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -36,11 +39,17 @@ public class BookingService {
 
     //Show All Availabilities
     public List<MovieShowDetailsResponseBean> getAllShowAvailabilities() {
+        return getMovieShowDetailsResponseBeans(movieShowDetailsRepository, log);
+    }
+
+    //MovieShowDetails Static Method
+    static List<MovieShowDetailsResponseBean> getMovieShowDetailsResponseBeans(MovieShowDetailsRepository movieShowDetailsRepository, Logger log) {
         List<MovieShowDetailsEntity> allDetails = movieShowDetailsRepository.findAll();
         List<MovieShowDetailsResponseBean> result = new ArrayList<>();
 
         for (MovieShowDetailsEntity detail : allDetails) {
             MovieShowDetailsResponseBean dto = new MovieShowDetailsResponseBean(
+                    detail.getId(),
                     detail.getMovie().getMovieName(),
                     detail.getTheater().getTheaterName(),
                     detail.getShowTime().getShowTime(),
@@ -48,7 +57,7 @@ public class BookingService {
             );
             result.add(dto);
         }
-
+        log.info("getAllShowAvailabilities result: {}", result.size());
         return result;
     }
 
@@ -69,6 +78,7 @@ public class BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("ShowTime Not Found"));
 
         if (showTime.getShowTime().isBefore(LocalDateTime.now().plusMinutes(30))) {
+            log.error("Booking must be done at least 30 minutes before the show time");
             throw new UnableToProcessCauseOfTimeException("Booking must be done at least 30 minutes before the show time");
         }
 
@@ -78,7 +88,8 @@ public class BookingService {
 
         Integer seatCount = bookingRequestBean.getSeatCount();
         if (seatCount > showDetails.getAvailableSeats()) {
-            throw new NotAvailableException("Not enough available seats");
+            log.error("Not enough available seats, Total available seats {}", showDetails.getAvailableSeats());
+            throw new NotAvailableException("Not enough available seats, Total available seats " + showDetails.getAvailableSeats());
         }
 
         BigDecimal totalAmount = movie.getPrice().multiply(BigDecimal.valueOf(seatCount));
@@ -92,7 +103,7 @@ public class BookingService {
                 .showTimeEntity(showTime)
                 .movieShowDetailsEntity(showDetails)
                 .build();
-
+        log.info("createBooking result: {}", bookingEntity);
         bookingRepository.save(bookingEntity);
 
         return BookingRequestBean.builder()
@@ -107,11 +118,13 @@ public class BookingService {
                 .build();
     }
 
+    //Payment
     public String processPayment(UUID bookingId, BigDecimal amount) throws ResourceNotFoundException {
         BookingEntity bookingEntity = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
         if (bookingEntity.isPaid()==true){
+            log.warn("Booking is already paid");
             return "payment done already";
         }
         else{
@@ -124,23 +137,27 @@ public class BookingService {
                         .orElseThrow(() -> new ResourceNotFoundException("Show details not found"));
                 showDetails.setAvailableSeats(showDetails.getAvailableSeats() - bookingEntity.getSeatCount());
                 movieShowDetailsRepository.save(showDetails);
+                log.info("Booking paid successfully {}", amount);
                 return "Payment successful " + amount;
             }
 
             else {
             bookingEntity.setPaid(false);
             bookingRepository.save(bookingEntity);
+            log.error("Payment failed: Expected {}", bookingEntity.getTotalAmount());
             return "Payment failed: Expected " + bookingEntity.getTotalAmount();
             }
         }
     }
 
-    public String DeleteBookingById(@PathVariable UUID bookingId)
+    //Cancel Booking
+    public String CancelBookingById(@PathVariable UUID bookingId)
     {
 
         BookingEntity bookingEntity = bookingRepository.findById(bookingId).orElseThrow(()-> new RuntimeException("Booking not found with the given BookingId: " + bookingId));
 
         if (bookingRepository.findById(bookingId).get().getMovieShowDetailsEntity().getShowTime().getShowTime().isBefore(LocalDateTime.now().plusMinutes(30))) {
+            log.error("Canceling ticket must be done at least 30 minutes before the show time");
             throw new UnableToProcessCauseOfTimeException("Canceling ticket must be done at least 30 minutes before the show time");
         }
 
@@ -150,15 +167,17 @@ public class BookingService {
             movieShowDetailsRepository.save(movieShowDetailsEntity);
             BigDecimal totalAmount = bookingEntity.getTotalAmount();
             bookingRepository.delete(bookingEntity);
+            log.info("Booking deleted successfully \nRefund: {}", totalAmount);
             return "Booking deleted successfully \nRefund: " + totalAmount;
         }
         return null;
     }
 
-
+    //Generating Ticket
     public byte[] generateTicketFile(UUID bookingId) throws ResourceNotFoundException {
         BookingEntity bookingEntity = bookingRepository.getById(bookingId);
         if (bookingEntity.isPaid()==false) {
+            log.error("payment not completed");
             throw new ResourceNotFoundException("payment not completed");
         }
 
@@ -172,6 +191,7 @@ public class BookingService {
                 + "Amount Paid: ₹" + bookingEntity.getTotalAmount() + "\n"
                 + "------------------\n";
 
+        log.info("ticket: {}", ticket.getBytes());
         return ticket.getBytes();
     }
 
@@ -180,18 +200,21 @@ public class BookingService {
         List<BookingResponseBean> allBooking = new ArrayList<>();
         List<BookingEntity> bookingEntityList = bookingRepository.findAll();
         for (BookingEntity bookingEntity : bookingEntityList) {
-            BookingResponseBean bookingResponseBean= BookingResponseBean.builder()
-                    .id(bookingEntity.getId())
-                    .Email(bookingEntity.getEmail())
-                    .MovieName(bookingEntity.getMovieEntity().getMovieName())
-                    .TheaterName(bookingEntity.getTheaterEntity().getTheaterName())
-                    .ShowTime(bookingEntity.getShowTimeEntity().getShowTime())
-                    .SeatCount(bookingEntity.getSeatCount())
-                    .TotalAmount(bookingEntity.getTotalAmount())
-                    .ispaid(bookingEntity.isPaid())
-                    .build();
-            allBooking.add(bookingResponseBean);
+            if (bookingEntity.isPaid()==true) {
+                BookingResponseBean bookingResponseBean = BookingResponseBean.builder()
+                        .id(bookingEntity.getId())
+                        .Email(bookingEntity.getEmail())
+                        .MovieName(bookingEntity.getMovieEntity().getMovieName())
+                        .TheaterName(bookingEntity.getTheaterEntity().getTheaterName())
+                        .ShowTime(bookingEntity.getShowTimeEntity().getShowTime())
+                        .SeatCount(bookingEntity.getSeatCount())
+                        .TotalAmount(bookingEntity.getTotalAmount())
+                        .ispaid(bookingEntity.isPaid())
+                        .build();
+                allBooking.add(bookingResponseBean);
+            }
         }
+        log.info("All Booking get successful {}", allBooking.size());
         return allBooking;
     }
 }

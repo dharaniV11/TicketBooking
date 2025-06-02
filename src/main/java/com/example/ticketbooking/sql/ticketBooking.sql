@@ -6,11 +6,12 @@
 
 CREATE TABLE public.movies (
                                id uuid NOT NULL,
-                               movie_name varchar(255) NULL,
                                genre varchar(255) NULL,
-                               rating float8 NULL,
+                               movie_name varchar(255) NOT NULL,
                                price numeric(5, 2) NULL,
-                               CONSTRAINT movies_pkey PRIMARY KEY (id)
+                               rating float8 NOT NULL,
+                               CONSTRAINT movies_pkey PRIMARY KEY (id),
+                               CONSTRAINT uknh6l2fpydr26j7vopnxjs9qkj UNIQUE (movie_name)
 );
 
 
@@ -22,8 +23,9 @@ CREATE TABLE public.movies (
 
 CREATE TABLE public.show_time (
                                   id uuid NOT NULL,
-                                  show_time timestamp(6) NULL,
-                                  CONSTRAINT show_time_pkey PRIMARY KEY (id)
+                                  show_time timestamp(6) NOT NULL,
+                                  CONSTRAINT show_time_pkey PRIMARY KEY (id),
+                                  CONSTRAINT ukhvv0asux57xe09moe2fq4ac6i UNIQUE (show_time)
 );
 
 
@@ -35,9 +37,10 @@ CREATE TABLE public.show_time (
 
 CREATE TABLE public.theater (
                                 id uuid NOT NULL,
-                                theater_name varchar(255) NULL,
+                                theater_name varchar(255) NOT NULL,
                                 total_seats int4 NULL,
-                                CONSTRAINT theater_pkey PRIMARY KEY (id)
+                                CONSTRAINT theater_pkey PRIMARY KEY (id),
+                                CONSTRAINT uk6qewdxxylk4d7qtqjby3qt07x UNIQUE (theater_name)
 );
 
 
@@ -89,13 +92,13 @@ CREATE TABLE public.movie_show_details (
 CREATE TABLE public.booking (
                                 id uuid NOT NULL,
                                 email varchar(255) NULL,
+                                is_paid bool NOT NULL,
                                 seat_count int4 NULL,
+                                total_amount numeric(38, 2) NULL,
                                 movie_entity_id uuid NULL,
+                                movie_show_details_entity_id uuid NULL,
                                 show_time_entity_id uuid NULL,
                                 theater_entity_id uuid NULL,
-                                total_amount numeric(38, 2) NULL,
-                                is_paid bool NOT NULL,
-                                movie_show_details_entity_id uuid NULL,
                                 CONSTRAINT booking_pkey PRIMARY KEY (id),
                                 CONSTRAINT fk2d3x1k7gmenpl35j4h3kbqed FOREIGN KEY (theater_entity_id) REFERENCES public.theater(id),
                                 CONSTRAINT fk8xx3scsi5nrq21a3uxbvgktwp FOREIGN KEY (show_time_entity_id) REFERENCES public.show_time(id),
