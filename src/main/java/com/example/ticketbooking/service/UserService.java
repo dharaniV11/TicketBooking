@@ -1,8 +1,8 @@
 package com.example.ticketbooking.service;
 
 import com.example.ticketbooking.entity.UserEntity;
-import com.example.ticketbooking.ResponseBean.UserResponseBean;
-import com.example.ticketbooking.RequestBean.UserRequestBean;
+import com.example.ticketbooking.responseBean.UserResponseBean;
+import com.example.ticketbooking.requestBean.UserRequestBean;
 import com.example.ticketbooking.exception.ResourceNotFoundException;
 import com.example.ticketbooking.repository.UserRepository;
 import jakarta.validation.Valid;

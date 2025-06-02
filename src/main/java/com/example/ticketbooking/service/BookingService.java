@@ -1,13 +1,13 @@
 package com.example.ticketbooking.service;
 
-import com.example.ticketbooking.RequestBean.BookingRequestBean;
-import com.example.ticketbooking.ResponseBean.MovieShowDetailsResponseBean;
+import com.example.ticketbooking.requestBean.BookingRequestBean;
+import com.example.ticketbooking.responseBean.MovieShowDetailsResponseBean;
 import com.example.ticketbooking.exception.NotAvailableException;
 import com.example.ticketbooking.exception.ResourceNotFoundException;
 import com.example.ticketbooking.entity.*;
 import com.example.ticketbooking.exception.UnableToProcessCauseOfTimeException;
 import com.example.ticketbooking.repository.*;
-import com.example.ticketbooking.ResponseBean.BookingResponseBean;
+import com.example.ticketbooking.responseBean.BookingResponseBean;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

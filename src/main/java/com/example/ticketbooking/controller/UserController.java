@@ -1,7 +1,7 @@
 package com.example.ticketbooking.controller;
 
-import com.example.ticketbooking.RequestBean.UserRequestBean;
-import com.example.ticketbooking.ResponseBean.UserResponseBean;
+import com.example.ticketbooking.requestBean.UserRequestBean;
+import com.example.ticketbooking.responseBean.UserResponseBean;
 import com.example.ticketbooking.enum_package.Gender;
 import com.example.ticketbooking.exception.ResourceNotFoundException;
 import com.example.ticketbooking.service.*;

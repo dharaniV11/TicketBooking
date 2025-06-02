@@ -1,10 +1,9 @@
 package com.example.ticketbooking.controller;
 
-import com.example.ticketbooking.RequestBean.BookingRequestBean;
-import com.example.ticketbooking.RequestBean.MovieShowDetailsRequestBean;
+import com.example.ticketbooking.requestBean.BookingRequestBean;
 import com.example.ticketbooking.exception.ResourceNotFoundException;
-import com.example.ticketbooking.ResponseBean.BookingResponseBean;
-import com.example.ticketbooking.ResponseBean.MovieShowDetailsResponseBean;
+import com.example.ticketbooking.responseBean.BookingResponseBean;
+import com.example.ticketbooking.responseBean.MovieShowDetailsResponseBean;
 import com.example.ticketbooking.service.BookingService;
 import com.example.ticketbooking.service.ShowDetailsCriteriaService;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.example.ticketbooking.RequestBean;
+package com.example.ticketbooking.requestBean;
 
 import com.example.ticketbooking.enum_package.Gender;
 import jakarta.validation.constraints.*;

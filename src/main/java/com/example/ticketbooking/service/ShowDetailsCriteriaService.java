@@ -5,7 +5,7 @@ import com.example.ticketbooking.exception.ResourceNotFoundException;
 import com.example.ticketbooking.repository.MovieRepository;
 import com.example.ticketbooking.repository.ShowTimeRepository;
 import com.example.ticketbooking.repository.TheaterRepository;
-import com.example.ticketbooking.ResponseBean.MovieShowDetailsResponseBean;
+import com.example.ticketbooking.responseBean.MovieShowDetailsResponseBean;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;

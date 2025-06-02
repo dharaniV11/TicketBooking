@@ -1,13 +1,13 @@
 package com.example.ticketbooking.service;
 
 
-import com.example.ticketbooking.RequestBean.MovieRequestBean;
-import com.example.ticketbooking.RequestBean.MovieShowDetailsRequestBean;
-import com.example.ticketbooking.RequestBean.ShowTimeRequestBean;
-import com.example.ticketbooking.RequestBean.TheaterRequestBean;
-import com.example.ticketbooking.ResponseBean.MovieShowDetailsResponseBean;
-import com.example.ticketbooking.ResponseBean.ShowTimeResponseBean;
-import com.example.ticketbooking.ResponseBean.TheaterResponseBean;
+import com.example.ticketbooking.requestBean.MovieRequestBean;
+import com.example.ticketbooking.requestBean.MovieShowDetailsRequestBean;
+import com.example.ticketbooking.requestBean.ShowTimeRequestBean;
+import com.example.ticketbooking.requestBean.TheaterRequestBean;
+import com.example.ticketbooking.responseBean.MovieShowDetailsResponseBean;
+import com.example.ticketbooking.responseBean.ShowTimeResponseBean;
+import com.example.ticketbooking.responseBean.TheaterResponseBean;
 import com.example.ticketbooking.entity.MovieEntity;
 import com.example.ticketbooking.entity.MovieShowDetailsEntity;
 import com.example.ticketbooking.entity.ShowTimeEntity;
@@ -15,7 +15,7 @@ import com.example.ticketbooking.entity.TheaterEntity;
 import com.example.ticketbooking.exception.ResourceNotFoundException;
 import com.example.ticketbooking.exception.NotAvailableException;
 import com.example.ticketbooking.repository.*;
-import com.example.ticketbooking.ResponseBean.MovieResponseBean;
+import com.example.ticketbooking.responseBean.MovieResponseBean;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

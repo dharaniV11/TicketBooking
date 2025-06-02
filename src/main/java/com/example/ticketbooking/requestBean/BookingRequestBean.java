@@ -1,4 +1,4 @@
-package com.example.ticketbooking.RequestBean;
+package com.example.ticketbooking.requestBean;
 
 import lombok.Builder;
 import lombok.Data;

@@ -2,7 +2,7 @@ package com.example.ticketbooking.service;
 
 import com.example.ticketbooking.entity.UserEntity;
 import com.example.ticketbooking.enum_package.Gender;
-import com.example.ticketbooking.ResponseBean.UserResponseBean;
+import com.example.ticketbooking.responseBean.UserResponseBean;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;

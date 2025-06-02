@@ -1,6 +1,5 @@
-package com.example.ticketbooking.RequestBean;
+package com.example.ticketbooking.requestBean;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
