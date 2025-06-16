@@ -77,9 +77,9 @@ CREATE TABLE public.movie_show_details (
                                            show_time_id uuid NULL,
                                            theater_id uuid NULL,
                                            CONSTRAINT movie_show_details_pkey PRIMARY KEY (id),
-                                           CONSTRAINT fk479k16jtd92m4hujo8kg1h8tj FOREIGN KEY (movie_id) REFERENCES public.movies(id),
-                                           CONSTRAINT fkj6bb29alhakd0djxrfu4b1h0 FOREIGN KEY (show_time_id) REFERENCES public.show_time(id),
-                                           CONSTRAINT fkjuoa5c6ph7f0iudowxu034b2j FOREIGN KEY (theater_id) REFERENCES public.theater(id)
+                                           CONSTRAINT fk479k16jtd92m4hujo8kg1h8tj FOREIGN KEY (movie_id) REFERENCES public.movies(id) ON DELETE CASCADE ,
+                                           CONSTRAINT fkj6bb29alhakd0djxrfu4b1h0 FOREIGN KEY (show_time_id) REFERENCES public.show_time(id) ON DELETE CASCADE,
+                                           CONSTRAINT fkjuoa5c6ph7f0iudowxu034b2j FOREIGN KEY (theater_id) REFERENCES public.theater(id) ON DELETE CASCADE
 );
 
 

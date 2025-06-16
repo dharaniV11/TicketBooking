@@ -10,6 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface ShowTimeRepository extends JpaRepository<ShowTimeEntity, UUID>{
-
     Optional<ShowTimeEntity> findByShowTime(LocalDateTime showTime);
 }

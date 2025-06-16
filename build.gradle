@@ -35,8 +35,23 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.testng:testng:7.10.2'
 }
 
+// JUnit test task (default)
 tasks.named('test') {
     useJUnitPlatform()
+    include '**/*Test.class' // e.g. UserServiceTest
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+// Create a new TestNG test task
+tasks.register('testngTests', Test) {
+    useTestNG()
+    include '**/*TestNG.class' // e.g. AdminServiceTestNG
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }

@@ -1,17 +1,18 @@
 package com.example.ticketbooking.controller;
 
+import com.example.ticketbooking.exception.ResourceNotFoundException;
 import com.example.ticketbooking.requestBean.MovieRequestBean;
 import com.example.ticketbooking.requestBean.MovieShowDetailsRequestBean;
 import com.example.ticketbooking.requestBean.ShowTimeRequestBean;
 import com.example.ticketbooking.requestBean.TheaterRequestBean;
+import com.example.ticketbooking.responseBean.MovieResponseBean;
 import com.example.ticketbooking.responseBean.MovieShowDetailsResponseBean;
 import com.example.ticketbooking.responseBean.ShowTimeResponseBean;
 import com.example.ticketbooking.responseBean.TheaterResponseBean;
-import com.example.ticketbooking.exception.ResourceNotFoundException;
-import com.example.ticketbooking.responseBean.MovieResponseBean;
 import com.example.ticketbooking.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,13 +28,15 @@ public class AdminController {
     private final AdminService adminService;
 
     @PostMapping("/addMovie")
-    public MovieRequestBean addMovie(@Valid @RequestBody MovieRequestBean movieRequestBean) {
-        return adminService.addMovie(movieRequestBean);
+    public ResponseEntity<MovieRequestBean> addMovie(@Valid @RequestBody MovieRequestBean movieRequestBean) {
+        MovieRequestBean addedMovie = adminService.addMovie(movieRequestBean);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedMovie);
     }
 
     @DeleteMapping("/deleteMovie/{movieId}")
-    public String deleteMovie(@PathVariable UUID movieId) throws ResourceNotFoundException {
-        return adminService.deleteMovieById(movieId);
+    public ResponseEntity<Void> deleteMovie(@PathVariable UUID movieId) throws ResourceNotFoundException {
+        adminService.deleteMovieById(movieId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/getAllMovies")

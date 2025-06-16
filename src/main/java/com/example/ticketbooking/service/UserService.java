@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @Slf4j
@@ -20,7 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserRequestBean addUser(@Valid @PathVariable UserRequestBean userRequestBean) {
+    public UserRequestBean addUser(@Valid UserRequestBean userRequestBean) {
         if (userRequestBean == null) {
             return null;
         }
@@ -68,17 +67,24 @@ public class UserService {
     public List<UserResponseBean> getAllUser() {
         List<UserResponseBean> userResponseBeans = new ArrayList<>();
         List<UserEntity> userEntityRepositoryAll = userRepository.findAll();
-        for (UserEntity userEntity : userEntityRepositoryAll) {
-            UserResponseBean userResponseBean = UserResponseBean.builder()
-                    .id(userEntity.getId())
-                    .username(userEntity.getUsername())
-                    .email(userEntity.getEmail())
-                    .mobile(userEntity.getMobile())
-                    .gender(userEntity.getGender())
-                    .age(userEntity.getAge())
-                    .build();
-            userResponseBeans.add(userResponseBean);
+
+        if (!userEntityRepositoryAll.isEmpty()) {
+            for (UserEntity userEntity : userEntityRepositoryAll) {
+                UserResponseBean userResponseBean = UserResponseBean.builder()
+                        .id(userEntity.getId())
+                        .username(userEntity.getUsername())
+                        .email(userEntity.getEmail())
+                        .mobile(userEntity.getMobile())
+                        .gender(userEntity.getGender())
+                        .age(userEntity.getAge())
+                        .build();
+                userResponseBeans.add(userResponseBean);
+            }
             log.info("All Users get successfully {}", userResponseBeans.size());
+        }
+        else
+        {
+            log.info("No users found, DB is empty");
         }
         return userResponseBeans;
     }

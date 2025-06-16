@@ -6,18 +6,20 @@ import com.example.ticketbooking.responseBean.UserResponseBean;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserCriteriaService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserCriteriaService.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -52,7 +54,6 @@ public class UserCriteriaService {
                     .email(userEntity.getEmail())
                     .mobile(userEntity.getMobile())
                     .gender(userEntity.getGender())
-                    .age(userEntity.getAge())
                     .build();
             userResponseBeans.add(userResponseBean);
         }
